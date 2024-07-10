@@ -2,7 +2,7 @@ branch-defaults:
   default:
     environment: testEB-dev
 environment-defaults:
-  testEB-dev:
+  testEB-dev: 
     branch: null
     repository: null
 global:
