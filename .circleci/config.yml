@@ -1,69 +1,60 @@
 version: 2.1
 orbs:
-  # orgs contain basc recipes and reproducible actions (install node, aws, etc.)
   node: circleci/node@5.0.2
   eb: circleci/aws-elastic-beanstalk@2.0.1
   aws-cli: circleci/aws-cli@3.1.1
-  # different jobs are calles later in the workflows sections
+
 jobs:
   build:
     docker:
-      # the base image can run most needed actions with orbs
       - image: "cimg/node:14.15"
     steps:
-      # install node and checkout code
       - node/install:
           node-version: "14.15"
       - checkout
-      # Use root level package.json to install dependencies in the frontend app
       - run:
           name: Install Front-End Dependencies
           command: |
             npm run frontend:install
-      # TODO: Install dependencies in the the backend API
       - run:
           name: Install API Dependencies
           command: |
             npm run api:install
-      # TODO: Lint the frontend
       - run:
           name: Front-End Lint
           command: |
             npm run frontend:lint
-      # TODO: Build the frontend app
       - run:
           name: Front-End Build
           command: |
             npm run frontend:build
-      # TODO: Build the backend API
       - run:
           name: API Build
           command: |
             npm run api:build
-  # deploy step will run only after manual approval
+
   deploy:
     docker:
       - image: "cimg/base:stable"
-      # more setup needed for aws, node, elastic beanstalk
     steps:
+      - checkout
       - node/install:
           node-version: "14.15"
-      - eb/setup
       - aws-cli/setup
-      - checkout
       - run:
-          name: Set Env to EB
-          command: |
-            npm run api:setenv
+          name: Create application version package
+          command: zip -r Archive.zip .
       - run:
-          name: Deploy App
-          # TODO: Install, build, deploy in both apps
+          name: Upload package to S3
+          command: aws s3 cp app.zip s3://udacity-bucket-01/Archive.zip
+      - run:
+          name: Create application version in Elastic Beanstalk
           command: |
-            npm run frontend:install
-            npm run frontend:build
-            npm run api:install
-            npm run api:build
-            npm run deploy
+            aws elasticbeanstalk create-application-version --application-name your-application-name --version-label app-$(date +%Y%m%d_%H%M%S) --source-bundle S3Bucket=arn:aws:s3:::udacity-bucket-01,S3Key=Archive.zip
+      - run:
+          name: Deploy App to Elastic Beanstalk
+          command: |
+            aws elasticbeanstalk update-environment --environment-name your-environment-name --version-label app-$(date +%Y%m%d_%H%M%S)
 
 workflows:
   udagram:
