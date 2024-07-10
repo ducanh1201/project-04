@@ -50,11 +50,11 @@ jobs:
       - run:
           name: Create application version in Elastic Beanstalk
           command: |
-            aws elasticbeanstalk create-application-version --application-name your-application-name --version-label app-$(date +%Y%m%d_%H%M%S) --source-bundle S3Bucket=udacity-bucket-01,S3Key=Archive.zip
+            aws elasticbeanstalk create-application-version --application-name testEB --version-label app-$(date +%Y%m%d_%H%M%S) --source-bundle S3Bucket=udacity-bucket-01,S3Key=Archive.zip
       - run:
           name: Deploy App to Elastic Beanstalk
           command: |
-            aws elasticbeanstalk update-environment --environment-name your-environment-name --version-label app-$(date +%Y%m%d_%H%M%S)
+            aws elasticbeanstalk update-environment --environment-name testEB-dev --version-label app-$(date +%Y%m%d_%H%M%S)
 
 workflows:
   udagram:
