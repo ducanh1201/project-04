@@ -2,10 +2,6 @@ branch-defaults:
   default:
     environment: testEB-dev
 environment-defaults:
-deploy: 
-      artifact: Archive.zip 
-      bucket_name: udacity-bucket-01
-      bucket_path: Archive.zip
   testEB-dev: 
     branch: null
     repository: null
