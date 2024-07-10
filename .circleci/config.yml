@@ -46,7 +46,7 @@ jobs:
           command: zip -r Archive.zip .
       - run:
           name: Upload package to S3
-          command: aws s3 cp app.zip s3://udacity-bucket-01/Archive.zip
+          command: aws s3 cp Archive.zip s3://udacity-bucket-01/Archive.zip
       - run:
           name: Create application version in Elastic Beanstalk
           command: |
